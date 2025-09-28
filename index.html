@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contactos San Bernardino</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2196F3, #21CBF3);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .search-section {
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            outline: none;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .search-input:focus {
+            border-color: #2196F3;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .results-count {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .contacts-grid {
+            display: grid;
+            gap: 15px;
+            padding: 0 30px 30px;
+        }
+
+        .contact-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border-left: 4px solid #2196F3;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .contact-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .contact-phone {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .contact-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-call {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-call:hover {
+            background: #45a049;
+            transform: translateY(-1px);
+        }
+
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+        }
+
+        .btn-whatsapp:hover {
+            background: #128C7E;
+            transform: translateY(-1px);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .no-results-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .search-section, .contacts-grid {
+                padding: 20px;
+            }
+            
+            .contact-actions {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📞 Contactos San Bernardino</h1>
+            <p>Encuentra servicios y profesionales de manera rápida</p>
+        </div>
+        
+        <div class="search-section">
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" placeholder="Buscar por nombre, rubro o servicio (ej: veterinaria, pizza, plomero...)">
+                <span class="search-icon">🔍</span>
+            </div>
+            <div class="results-count" id="resultsCount"></div>
+        </div>
+        
+        <div class="contacts-grid" id="contactsContainer"></div>
+    </div>
+
+    <script>
+        // Base de datos de contactos
+        const contactos = [
+            { nombre: "Tapicero Arnaldo Aguilar", telefono: "0982 234896", categoria: "tapicero" },
+            { nombre: "FarmaOliva SanBer", telefono: "0986 740007", categoria: "farmacia" },
+            { nombre: "Kaneco SB", telefono: "0986 873445", categoria: "tienda" },
+            { nombre: "Cerrajero Justino", telefono: "0971 101740", categoria: "cerrajero" },
+            { nombre: "Cerrajero Altos Beto", telefono: "0985 409615", categoria: "cerrajero" },
+            { nombre: "Ruth Veterinaria urgencias", telefono: "0972 416819", categoria: "veterinaria" },
+            { nombre: "Servivetpy veterinaria", telefono: "0971 661991", categoria: "veterinaria" },
+            { nombre: "Melanie Weber veterinaria", telefono: "0983 202671", categoria: "veterinaria" },
+            { nombre: "Bussy Vet veterinaria", telefono: "0983 739184", categoria: "veterinaria" },
+            { nombre: "Juguetería Carolina Santiviago", telefono: "0961 810405", categoria: "jugueteria" },
+            { nombre: "Carpintero Jose Pavón", telefono: "0986 107499", categoria: "carpintero" },
+            { nombre: "Escribana Sonia Sánchez", telefono: "0981 435682", categoria: "escribana" },
+            { nombre: "Escrib Grudrum Grimm", telefono: "0981 257513", categoria: "escribana" },
+            { nombre: "Contadora Andrea Villanueva", telefono: "0981 133483", categoria: "contadora" },
+            { nombre: "Entregas y encomiendas Pesa", telefono: "0991 927782", categoria: "delivery" },
+            { nombre: "Lavandería Cinthya Oberman", telefono: "0972 130025", categoria: "lavanderia" },
+            { nombre: "Lavandería Maria Teresa", telefono: "0982 148087", categoria: "lavanderia" },
+            { nombre: "Bombero Leite SB", telefono: "0984 292807", categoria: "bombero" },
+            { nombre: "Imprenta SB Imagen Corporativa", telefono: "0981 250003", categoria: "imprenta" },
+            { nombre: "Lavado de sofás/sommier Elvio López", telefono: "0982 939223", categoria: "limpieza" },
+            { nombre: "Mercado de pulgas plaza Elianne", telefono: "0971 967211", categoria: "mercado" },
+            { nombre: "Aseo Urbano Ramona Torres", telefono: "0982 645913", categoria: "limpieza" },
+            { nombre: "Aseo Urbano Maxi Vache", telefono: "0986 741767", categoria: "limpieza" },
+            { nombre: "Alquiler de puff sillas tablones etc Nino", telefono: "0983 244557", categoria: "alquiler" },
+            { nombre: "Vidriero y Carpintero Luis Silva", telefono: "0983 689384", categoria: "vidriero carpintero" },
+            { nombre: "Huevos de codorniz Maria de Guggiari", telefono: "0981 543460", categoria: "huevos codorniz" },
+            { nombre: "DJ Derlis Arenas", telefono: "0981 417397", categoria: "dj musica" },
+            { nombre: "Dj Francis", telefono: "0984 336040", categoria: "dj musica" },
+            { nombre: "Dj Alex", telefono: "0986 571886", categoria: "dj musica" },
+            { nombre: "Dj Rorro", telefono: "0982 825493", categoria: "dj musica" },
+            { nombre: "Falu pizza", telefono: "0983 358489", categoria: "pizza comida" },
+            { nombre: "Rincón de Anita", telefono: "0981 539360", categoria: "comida restaurant" },
+            { nombre: "Neri Benitez ESSAP", telefono: "0981 793870", categoria: "agua essap" },
+            { nombre: "Óptica San Ber", telefono: "0983 320191", categoria: "optica" },
+            { nombre: "Herrero Gamarra portón eléctrico", telefono: "0981 385374", categoria: "herrero porton electrico" },
+            { nombre: "Tadeo técnico de portón eléctrico", telefono: "0983 771900", categoria: "tecnico porton electrico" },
+            { nombre: "Carpintero Elvio Romero", telefono: "0981 770825", categoria: "carpintero" },
+            { nombre: "La Cumbre Cinthya Burgos", telefono: "0982 276697", categoria: "restaurant comida" },
+            { nombre: "La Cumbre", telefono: "0984 500216", categoria: "restaurant comida" },
+            { nombre: "Julio Rojas Ande", telefono: "0983 766169", categoria: "electricidad ande" },
+            { nombre: "EcoSushi", telefono: "0972 777910", categoria: "sushi comida" },
+            { nombre: "Ale Sisi fabricadora de hielo", telefono: "0972 248481", categoria: "hielo" },
+            { nombre: "Susana alquiler tablones etc", telefono: "0982 131635", categoria: "alquiler" },
+            { nombre: "prof Gladys alquileres mesas, sillas etc", telefono: "0994 456509", categoria: "alquiler mesas sillas" },
+            { nombre: "Escribana Emma Britez", telefono: "0983 444131", categoria: "escribana" },
+            { nombre: "Tu Súper delivery", telefono: "0994 524000", categoria: "delivery supermercado" },
+            { nombre: "Canaletero SB", telefono: "0983 473108", categoria: "canaletero" },
+            { nombre: "Romina Globo Loco", telefono: "0983 212268", categoria: "globos fiestas" },
+            { nombre: "Betina Globo loco", telefono: "0992 288731", categoria: "globos fiestas" },
+            { nombre: "Canaletero y herrero Juan", telefono: "0986 292978", categoria: "canaletero herrero" },
+            { nombre: "Modista Claudia", telefono: "0986 274023", categoria: "modista costura" },
+            { nombre: "Modista Lourdes profe Lucy", telefono: "0982 228822", categoria: "modista costura" },
+            { nombre: "Burgos Mini Market", telefono: "0985 785428", categoria: "minimarket supermercado" },
+            { nombre: "La vienesa SB", telefono: "0981 341755", categoria: "panaderia" },
+            { nombre: "Canaletero Rossana Servin", telefono: "0981 786314", categoria: "canaletero" },
+            { nombre: "Víctor técnico lavarropas empre", telefono: "0971 141457", categoria: "tecnico lavarropas" },
+            { nombre: "Dani hijo plomero Yegros", telefono: "0982 983656", categoria: "plomero" },
+            { nombre: "Freddy hijo plomero Yegros", telefono: "0992 910078", categoria: "plomero" },
+            { nombre: "Vidriero Felipe Silva", telefono: "0981 758640", categoria: "vidriero" },
+            { nombre: "Vidriero Jhonny", telefono: "0971 107091", categoria: "vidriero" },
+            { nombre: "Luis Aquino electricista certf Ande", telefono: "0984 453382", categoria: "electricista" },
+            { nombre: "Diana Alvarez Barbería Peluquería", telefono: "0981 896966", categoria: "barberia peluqueria" },
+            { nombre: "Ferretería Dani", telefono: "0981 943862", categoria: "ferreteria" },
+            { nombre: "Panadería San Cayetano", telefono: "0972 227472", categoria: "panaderia" },
+            { nombre: "Super San Cayetano", telefono: "0512 232961", categoria: "supermercado" },
+            { nombre: "Técnico aire, portón, electrodom Mario Ortiz", telefono: "0981 234494", categoria: "tecnico aire electrodomesticos" },
+            { nombre: "Técnico de aire Ronald Galeano", telefono: "0975 488542", categoria: "tecnico aire acondicionado" },
+            { nombre: "Técnico de aire Jorge Zorrilla", telefono: "0985 751850", categoria: "tecnico aire acondicionado" },
+            { nombre: "Técnico aire Marcial Cáceres", telefono: "0981 163196", categoria: "tecnico aire acondicionado" },
+            { nombre: "Técnico aire Marcelo Ortiz", telefono: "0994 450538", categoria: "tecnico aire acondicionado" },
+            { nombre: "Vendedora Casa Austria Sari Franco", telefono: "0981 513675", categoria: "vendedora" },
+            { nombre: "Asadero Fabio Valmorliz", telefono: "0982 325901", categoria: "asadero comida parrilla" },
+            { nombre: "Eduardo Delgado Mozo SB", telefono: "0982 149644", categoria: "mozo" },
+            { nombre: "Bomberos SB", telefono: "0512 233100", categoria: "bomberos emergencia" },
+            { nombre: "Blanqui Bristol", telefono: "0981 976125", categoria: "blanqueria" },
+            { nombre: "Electricista Víctor Toreto", telefono: "0981 574937", categoria: "electricista" },
+            { nombre: "Test covid Altos San Jose", telefono: "0981 245493", categoria: "test covid laboratorio" },
+            { nombre: "Taxi Luis Aquino", telefono: "0983 476691", categoria: "taxi transporte" },
+            { nombre: "Taxi Matute", telefono: "0982 285511", categoria: "taxi transporte" },
+            { nombre: "Taxi Emilio Aquino", telefono: "0982 422332", categoria: "taxi transporte" },
+            { nombre: "Médico dr Carossini", telefono: "0981 932933", categoria: "medico doctor" },
+            { nombre: "César Vargas aire acond Caacupe", telefono: "0981 489657", categoria: "aire acondicionado" },
+            { nombre: "Peluquería Barbería El cabrón", telefono: "0984 221406", categoria: "peluqueria barberia" },
+            { nombre: "Técnico heladera Benito Borja", telefono: "0981 926889", categoria: "tecnico heladera refrigeracion" },
+            { nombre: "Hotel Posada SB", telefono: "0981 118690", categoria: "hotel hospedaje" },
+            { nombre: "Julio Refrigeración", telefono: "0981 995543", categoria: "refrigeracion" },
+            { nombre: "Pizzería Ni Ahí Estoy", telefono: "0984 650868", categoria: "pizzeria comida" },
+            { nombre: "Topógrafo Fede Ferreira", telefono: "0981 665883", categoria: "topografo" },
+            { nombre: "Comisaría San Bernardino", telefono: "0512 232204", categoria: "policia comisaria emergencia" },
+            { nombre: "Miguel A Gimenez serv tanque c/ motor", telefono: "0983 471162", categoria: "tanque agua motor" },
+            { nombre: "Delivery de Hamburguesas Tio Luque", telefono: "0986 880200", categoria: "hamburguesa delivery comida" },
+            { nombre: "Pollos Don Juan p/ pedidos", telefono: "0985 390080", categoria: "pollos comida" },
+            { nombre: "Fátima odontóloga", telefono: "0981 459285", categoria: "odontologo dentista" },
+            { nombre: "Jardinero y limpieza Félix", telefono: "0985 726767", categoria: "jardinero limpieza" },
+            { nombre: "Instalación aire David", telefono: "0985 906568", categoria: "instalacion aire acondicionado" },
+            { nombre: "Burguer King San Ber", telefono: "021 4135500", categoria: "burger king hamburguesa comida" },
+            { nombre: "Herrería Ovelar", telefono: "0972 672881", categoria: "herreria" },
+            { nombre: "Record Electric ventas SanBer", telefono: "0983 521067", categoria: "electrodomesticos ventas" },
+            { nombre: "Darío Chena Jardinero", telefono: "0983 387289", categoria: "jardinero" },
+            { nombre: "Cerrajero San Ber", telefono: "0971 101740", categoria: "cerrajero" },
+            { nombre: "Namasté Maximilian", telefono: "0991 729808", categoria: "namaste yoga spa" },
+            { nombre: "Distribuidor Agua Bes Cristian Hermosilla", telefono: "0974 945018", categoria: "agua distribuidor" },
+            { nombre: "Super 6 delivery online", telefono: "0981 992900", categoria: "delivery supermercado" },
+            { nombre: "Carga de agua y reservorios De La Victoria", telefono: "0971 551254", categoria: "agua carga reservorios" },
+            { nombre: "Aníbal Pozo Félix", telefono: "0982 680507", categoria: "pozo agua" },
+            { nombre: "Servicio de agua Leticia Parcerisa", telefono: "0985 400174", categoria: "agua servicio" },
+            { nombre: "Pizzeria el Mirador", telefono: "0982 449263", categoria: "pizzeria comida" },
+            { nombre: "Carol Villalba fisioterapeuta masajista", telefono: "0981 938702", categoria: "fisioterapeuta masajista" },
+            { nombre: "Manu Amarilla yoga San Ber", telefono: "0981 643061", categoria: "yoga" }
+        ];
+
+        let filteredContacts = [...contactos];
+
+        // Elementos del DOM
+        const searchInput = document.getElementById('searchInput');
+        const contactsContainer = document.getElementById('contactsContainer');
+        const resultsCount = document.getElementById('resultsCount');
+
+        // Función para normalizar texto (sin acentos, minúsculas)
+        function normalize(text) {
+            return text.toLowerCase()
+                      .normalize('NFD')
+                      .replace(/[\u0300-\u036f]/g, '');
+        }
+
+        // Función para filtrar contactos
+        function filterContacts(query) {
+            if (!query.trim()) {
+                filteredContacts = [...contactos];
+            } else {
+                const normalizedQuery = normalize(query);
+                filteredContacts = contactos.filter(contact => {
+                    const normalizedName = normalize(contact.nombre);
+                    const normalizedCategory = normalize(contact.categoria);
+                    
+                    return normalizedName.includes(normalizedQuery) || 
+                           normalizedCategory.includes(normalizedQuery);
+                });
+            }
+            renderContacts();
+        }
+
+        // Función para renderizar contactos
+        function renderContacts() {
+            resultsCount.textContent = `${filteredContacts.length} contacto${filteredContacts.length !== 1 ? 's' : ''} encontrado${filteredContacts.length !== 1 ? 's' : ''}`;
+            
+            if (filteredContacts.length === 0) {
+                contactsContainer.innerHTML = `
+                    <div class="no-results">
+                        <div class="no-results-icon">🔍</div>
+                        <h3>No se encontraron resultados</h3>
+                        <p>Intenta con otros términos de búsqueda</p>
+                    </div>
+                `;
+                return;
+            }
+
+            contactsContainer.innerHTML = filteredContacts.map(contact => `
+                <div class="contact-card">
+                    <div class="contact-name">${contact.nombre}</div>
+                    <div class="contact-phone">${contact.telefono}</div>
+                    <div class="contact-actions">
+                        <a href="tel:${contact.telefono.replace(/\s/g, '')}" class="btn btn-call">
+                            📞 Llamar
+                        </a>
+                        <a href="https://wa.me/595${contact.telefono.replace(/\s/g, '').substring(1)}" target="_blank" class="btn btn-whatsapp">
+                            💬 WhatsApp
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Event listener para la búsqueda
+        searchInput.addEventListener('input', (e) => {
+            filterContacts(e.target.value);
+        });
+
+        // Renderizar contactos iniciales
+        renderContacts();
+
+        // Focus automático en el campo de búsqueda
+        searchInput.focus();
+    </script>
+</body>
+</html>
